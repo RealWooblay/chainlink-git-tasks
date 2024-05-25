@@ -80,7 +80,7 @@ func getUserId(token string) (uint64, error) {
 		return 0, err
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Authorization", "Bearer " + token)
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	res, err := client.Do(req)
@@ -111,7 +111,7 @@ func isRepoContributor(token string, username string, owner string, repo string)
 		return false, err
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Authorization", "Bearer " + token)
 	req.Header.Set("X-GitHub-Api-Version", "2022-11-28")
 
 	res, err := client.Do(req)

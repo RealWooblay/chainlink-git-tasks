@@ -2,12 +2,10 @@ const owner = args[0];
 const repo = args[1];
 const pullNumber = args[2];
 
-const tokenId = args[3];
+const commitTitle = args[3];
+const commitMessage = args[4];
 
-const commitTitle = args[4];
-const commitMessage = args[5];
-
-if(!secrets[tokenId]) {
+if(!secrets.githubToken) {
     throw Error(
         "Secret error!"
     );
@@ -18,7 +16,7 @@ const request = Functions.makeHttpRequest({
     method: "PUT",
     headers: {
         "Accept": "application/vnd.github+json",
-        "Authorization": `Bearer ${token}`,
+        "Authorization": `Bearer ${secrets.githubToken}`,
         "X-GitHub-Api-Version": "2022-11-28"
     },
     data: {
