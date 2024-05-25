@@ -13,7 +13,6 @@ import (
 func main() {
 	router := httprouter.New()
 
-	router.POST("/setcontributor", githubauth.SetContributor)
 	router.POST("/addrepo", githubauth.AddRepo)
 
 	handler := cors.AllowAll().Handler(router)

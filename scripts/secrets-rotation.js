@@ -1,14 +1,8 @@
-const fs = require("fs");
-const path = require("path");
-const {
-    SecretsManager,
-} = require("@chainlink/functions-toolkit");
+const { SecretsManager } = require("@chainlink/functions-toolkit");
 const ethers = require("ethers");
+const ghTasksAbi = require("../foundry/out/GHTasks.sol/GHTasks.json");
 
-const functionsConsumerAbi = require("./functionsConsumerAbi.json");
-
-const consumerAddress = "0xa5e6a1D42779d9B95e0AeFDd87274dfFEC3852d8";
-const subscriptionId = 46;
+const ghTasksAddress = "0x217e1FbcE6d1605d53111bd756cDcCb125A26A28";
 
 const routerAddress = "0xf9B8fc078197181C841c296C876945aaa425B278";
 const donId = "fun-base-sepolia-1";
@@ -18,16 +12,12 @@ const gatewayUrls = [
     "https://02.functions-gateway.testnet.chain.link/",
 ];
 
-const source = fs.readFileSync(path.resolve(__dirname, "source.js")).toString();
-
-const args = ["RealWooblay", "chainlink-git-tasks", "2", "Onchain commit", "This was merged onchain!"];
-const secrets = { githubToken: process.env.GITHUB_TOKEN };
-const slotIdNumber = 0;
-const expirationTimeMinutes = 15;
-const gasLimit = 300000;
+const secrets = { githubToken: process.env.OWNER_GITHUB_TOKEN };
+const slotId = 0;
+const expirationTimeMinutes = 5;
 
 const request = async () => {
-    const privateKey = process.env.PRIVATE_KEY;
+    const privateKey = process.env.OWNER_PRIVATE_KEY;
     if (!privateKey) {
         throw new Error(
             "private key not provided - check your environment variables"
@@ -55,13 +45,13 @@ const request = async () => {
     const encryptedSecretsObj = await secretsManager.encryptSecrets(secrets);
 
     console.log(
-        `Upload encrypted secret to gateways ${gatewayUrls}. slotId ${slotIdNumber}. Expiration in minutes: ${expirationTimeMinutes}`
+        `Upload encrypted secret to gateways ${gatewayUrls}. slotId ${slotId}. Expiration in minutes: ${expirationTimeMinutes}`
     );
 
     const uploadResult = await secretsManager.uploadEncryptedSecretsToDON({
         encryptedSecretsHexstring: encryptedSecretsObj.encryptedSecrets,
         gatewayUrls: gatewayUrls,
-        slotId: slotIdNumber,
+        slotId: slotId,
         minutesUntilExpiration: expirationTimeMinutes,
     });
 
@@ -74,28 +64,21 @@ const request = async () => {
         uploadResult
     );
 
-    const donHostedSecretsVersion = parseInt(uploadResult.version); // fetch the reference of the encrypted secrets
+    const donHostedSecretsVersion = parseInt(uploadResult.version);
 
-    const functionsConsumer = new ethers.Contract(
-        consumerAddress,
-        functionsConsumerAbi,
+    const ghTasks = new ethers.Contract(
+        ghTasksAddress,
+        ghTasksAbi.abi,
         signer
     );
 
-    const transaction = await functionsConsumer.sendRequest(
-        source,
-        "0x",
-        slotIdNumber,
-        donHostedSecretsVersion,
-        args,
-        [],
-        subscriptionId,
-        gasLimit,
-        ethers.utils.formatBytes32String(donId)
+    const transaction = await ghTasks.setDonSecret(
+        slotId,
+        donHostedSecretsVersion
     );
 
     console.log(
-        `\n✅ Functions request sent! Transaction hash ${transaction.hash}. Waiting for a response...`
+        `\n✅ Set DON secrets sent! Transaction hash ${transaction.hash}. Waiting for a response...`
     );
 
     console.log(

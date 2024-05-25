@@ -11,6 +11,7 @@ interface IGHTasks {
         bool value
     );
 
+    event SetDonSecret(uint8 slotId, uint64 version);
     event SetSource(uint256 indexed sourceId, string source);
     event Request(
         uint256 indexed orgId,
@@ -18,7 +19,6 @@ interface IGHTasks {
         string[] args,
         bytes32 requestId
     );
-    event RequestFulfilled(bytes32 requestId, bytes response, bytes error);
 
     struct Org {
         mapping(address => bool) owners;
@@ -41,6 +41,8 @@ interface IGHTasks {
         string memory repoName,
         bool value
     ) external;
+
+    function setDonSecret(uint8 slotId, uint64 version) external;
 
     function setSource(uint256 sourceId, string memory source) external;
 

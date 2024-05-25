@@ -77,6 +77,16 @@ contract GHTasks is IGHTasks, FunctionsClient, Ownable {
         emit SetOrgRepo(orgId, repoOwner, repoName, value);
     }
 
+    function setDonSecret(
+        uint8 slotId, 
+        uint64 version
+    ) external override onlyOwner {
+        donSecretsSlotId = slotId;
+        donSecretsVersion = version;
+        
+        emit SetDonSecret(slotId, version);
+    }
+
     function setSource(
         uint256 sourceId,
         string memory source
@@ -96,7 +106,7 @@ contract GHTasks is IGHTasks, FunctionsClient, Ownable {
             revert("Nil source!");
         }
 
-        if (!_orgs[orgId].owners[address(0)] || !_orgs[orgId].owners[msg.sender]) {
+        if (!_orgs[orgId].owners[address(0)] && !_orgs[orgId].owners[msg.sender]) {
             revert("Sender is not an org owner!");
         }
 
@@ -122,7 +132,5 @@ contract GHTasks is IGHTasks, FunctionsClient, Ownable {
         bytes32 requestId,
         bytes memory response,
         bytes memory err
-    ) internal override {
-        emit RequestFulfilled(requestId, response, err);        
-    }
+    ) internal override {}
 }
