@@ -9,8 +9,8 @@ interface IGithubConnector {
     function getGithubId(uint256 tokenId) external view returns (uint256);
 
     function requestGithubId(
-        bytes memory encryptedSecretsUrls,
         uint256 tokenId,
+        bytes memory encryptedSecretsUrls,
         uint64 subscriptionId,
         uint32 gasLimit
     ) external returns (bytes32 requestId);

@@ -6,22 +6,18 @@ import {ERC721Votes} from "@openzeppelin/token/ERC721/extensions/ERC721Votes.sol
 import {EIP712} from "@openzeppelin/utils/cryptography/EIP712.sol";
 import {Ownable} from "@openzeppelin/access/Ownable.sol";
 
-import {IWooblayUser} from "./IWooblayUser.sol";
+import {IWooblayUsers} from "./IWooblayUsers.sol";
 
-contract WooblayUser is
-    ERC721,
-    EIP712,
-    ERC721Votes,
-    Ownable,
-    IWooblayUser
-{
+contract WooblayUsers is ERC721, EIP712, ERC721Votes, Ownable, IWooblayUsers {
     uint256 private _totalSupply;
 
     string private _baseUri;
 
-    constructor(address initialOwner)
-        ERC721("Wooblay User", "WOOBLAYUSER")
-        EIP712("Wooblay User", "1")
+    constructor(
+        address initialOwner
+    )
+        ERC721("Wooblay Users", "WOOBLAYUSERS")
+        EIP712("Wooblay Users", "1")
         Ownable(initialOwner)
     {}
 
@@ -42,7 +38,7 @@ contract WooblayUser is
         _totalSupply++;
     }
 
-    function setBaseURI(string memory baseUri) external override onlyOwner() {
+    function setBaseURI(string memory baseUri) external override onlyOwner {
         _baseUri = baseUri;
     }
 
