@@ -15,17 +15,6 @@ import {IGithubTasks} from "./IGithubTasks.sol";
 
 contract GithubTasks is FunctionsClient, FunctionsConsumers, IGithubTasks {
     using Address for address payable;
-
-    struct Task {
-        address owner;
-        uint256 issueId;
-        address[] tokens;
-        uint256[] amounts;
-        uint256 value;
-        uint256 expiration;
-        bytes32 requestId;
-    }
-
     using FunctionsRequest for FunctionsRequest.Request;
 
     address public immutable wooblayUsers;
@@ -58,6 +47,8 @@ contract GithubTasks is FunctionsClient, FunctionsConsumers, IGithubTasks {
 
     function newTask(
         address owner,
+        uint256 org,
+        uint256 repo,
         uint256 issueId,
         address[] memory tokens,
         uint256[] memory amounts,
@@ -80,6 +71,8 @@ contract GithubTasks is FunctionsClient, FunctionsConsumers, IGithubTasks {
 
         _tasks[taskId] = Task(
             owner,
+            org,
+            repo,
             issueId,
             tokens,
             amounts,
