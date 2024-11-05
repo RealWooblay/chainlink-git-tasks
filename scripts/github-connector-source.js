@@ -4,7 +4,7 @@ if(!secrets.githubToken) {
 
 const request = Functions.makeHttpRequest({
     url: `https://api.github.com/user`,
-    method: "PUT",
+    method: "GET",
     headers: {
         "Accept": "application/vnd.github+json",
         "Authorization": `Bearer ${secrets.githubToken}`,
